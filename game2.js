@@ -3,7 +3,7 @@ const ctx = canvas.getContext('2d');
 const WORD_LIST = ['type', 'game', 'cups', 'light', 'table', 'rain', 'cream', 'code', 'book', 'bed', 'mattress', 'shampoo' , 'charger' , 'wifi', 'laptop', 'coffee', 'keyboard'];
 const WORD_SPEED = 1; // Speed of words in pixels per frame
 const WORD_DROP_INTERVAL = 1000; // Time interval between word drops in milliseconds
-const MAX_WORDS_ACTIVE = 3; // Maximum number of words active simultaneously
+const MAX_WORDS_ACTIVE = 5; // Maximum number of words active simultaneously
 
 let score = 0;
 let words = []; // Array to store active words
@@ -47,7 +47,8 @@ function draw() {
 
     // Check if game is over
     if (gameover) {
-        ctx.fillText('Game Over!', 650, 200);
+        ctx.fillStyle = 'red'; // Change the color to red
+        ctx.fillText('Game Over!', 650, 300);
         return;
     }
 
