@@ -10,7 +10,7 @@ const WORD_LIST = ["type", "game", "cups", "light", "table", "rain", "cream", "c
 "white", "text", "small", "rating", "rate", "government", "children", "during", "usa", "return", "students"];
 const WORD_SPEED = 1.0; // Speed of words in pixels per frame
 const WORD_DROP_INTERVAL = 1000; // Time interval between word drops in milliseconds
-const MAX_WORDS_ACTIVE = 6; // Maximum number of words active simultaneously
+const MAX_WORDS_ACTIVE = 5; // Maximum number of words active simultaneously
 
 let score = 0;
 let words = []; // Array to store active words
