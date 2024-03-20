@@ -42,4 +42,4 @@ while True:
         pyautogui.press('enter')  # Press Enter to submit the typed word
 
         # Wait for the next word to appear
-        time.sleep(1)  # Adjust this delay as needed
+        time.sleep(0.8)  # Adjust delay as needed
