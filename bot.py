@@ -28,6 +28,7 @@ def get_words_to_type():
 
     return words
 
+
 # Delay to allow time to switch to the game window
 time.sleep(5)
 
