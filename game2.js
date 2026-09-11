@@ -1,6 +1,17 @@
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+const THEME = {
+    wordColors: ['#818cf8', '#a78bfa', '#67e8f9', '#6ee7b7', '#f9a8d4'],
+    matchColor: '#34d399',
+    matchHighlight: 'rgba(52, 211, 153, 0.2)',
+    gridColor: 'rgba(148, 163, 184, 0.06)',
+    successParticle: '#34d399',
+    dangerParticle: '#f87171',
+    levelUpParticle: '#818cf8',
+    font: '500 24px "JetBrains Mono", monospace'
+};
+
 // Game configuration
 const WORD_LIST = [
     "type", "game", "cups", "light", "table", "rain", "cream", "code", "book", "bed", 
@@ -83,8 +94,6 @@ function drawParticles() {
         ctx.save();
         ctx.globalAlpha = particle.life;
         ctx.fillStyle = particle.color;
-        ctx.shadowBlur = 10;
-        ctx.shadowColor = particle.color;
         ctx.beginPath();
         ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
         ctx.fill();
@@ -100,7 +109,7 @@ function generateWordDrop() {
             x: Math.random() * (canvas.width - 150) + 50,
             y: -30,
             speed: gameState.baseSpeed + (gameState.level - 1) * 0.2,
-            color: `hsl(${Math.random() * 60 + 120}, 100%, 70%)`, // Green to cyan range
+            color: THEME.wordColors[Math.floor(Math.random() * THEME.wordColors.length)],
             glow: Math.random() * 10 + 5,
             matched: false
         };
@@ -128,49 +137,33 @@ function updateStats() {
         gameState.maxWordsActive = Math.min(3 + Math.floor(gameState.level / 3), 8);
         gameState.wordDropInterval = Math.max(1000, 2000 - (gameState.level - 1) * 100);
         gameState.screenShake = 20; // Level up screen shake
-        createParticles(canvas.width / 2, canvas.height / 2, '#00ff41', 20);
+        createParticles(canvas.width / 2, canvas.height / 2, THEME.levelUpParticle, 20);
     }
 }
 
-// Draw word with retro effects
+// Draw word on canvas
 function drawWord(word) {
     ctx.save();
-    
-    // Glow effect
-    ctx.shadowBlur = word.glow;
-    ctx.shadowColor = word.color;
-    
-    // Check if word matches current input
-    const isMatching = word.text.toLowerCase().startsWith(gameState.currentInput.toLowerCase()) && 
+
+    const isMatching = word.text.toLowerCase().startsWith(gameState.currentInput.toLowerCase()) &&
                       gameState.currentInput.length > 0;
-    
-    if (isMatching) {
-        ctx.fillStyle = '#ff0080'; // Pink for matching words
-        ctx.shadowColor = '#ff0080';
-        word.glow = Math.min(word.glow + 0.5, 20);
-    } else {
-        ctx.fillStyle = word.color;
-        word.glow = Math.max(word.glow - 0.1, 5);
-    }
-    
-    // Font styling
-    ctx.font = 'bold 24px "Share Tech Mono", monospace';
+
+    ctx.font = THEME.font;
     ctx.textAlign = 'center';
-    
-    // Draw word
-    ctx.fillText(word.text, word.x, word.y);
-    
-    // Draw matching portion highlight
+    ctx.fillStyle = isMatching ? THEME.matchColor : word.color;
+
     if (isMatching && gameState.currentInput.length > 0) {
         const matchedPortion = gameState.currentInput.toLowerCase();
         const textWidth = ctx.measureText(matchedPortion).width;
         const fullWidth = ctx.measureText(word.text).width;
         const startX = word.x - fullWidth / 2;
-        
-        ctx.fillStyle = 'rgba(255, 0, 128, 0.3)';
-        ctx.fillRect(startX, word.y - 20, textWidth, 25);
+
+        ctx.fillStyle = THEME.matchHighlight;
+        ctx.fillRect(startX, word.y - 22, textWidth, 28);
+        ctx.fillStyle = THEME.matchColor;
     }
-    
+
+    ctx.fillText(word.text, word.x, word.y);
     ctx.restore();
 }
 
@@ -187,16 +180,13 @@ function applyScreenShake() {
 
 // Main draw function
 function draw() {
-    // Clear canvas with retro background
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+    ctx.fillStyle = 'rgba(15, 23, 42, 0.15)';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Apply screen shake
+
     ctx.save();
     applyScreenShake();
-    
-    // Draw grid pattern
-    ctx.strokeStyle = 'rgba(0, 255, 65, 0.1)';
+
+    ctx.strokeStyle = THEME.gridColor;
     ctx.lineWidth = 1;
     for (let i = 0; i < canvas.width; i += 50) {
         ctx.beginPath();
@@ -245,7 +235,7 @@ function updateWords() {
         if (word.y >= canvas.height - 20) {
             gameState.gameover = true;
             gameState.screenShake = 30;
-            createParticles(word.x, word.y, '#ff0080', 15);
+            createParticles(word.x, word.y, THEME.dangerParticle, 15);
         }
     });
 }
@@ -284,7 +274,7 @@ function checkWordMatches() {
             gameState.correctCharacters += word.text.length;
             
             // Create explosion effect
-            createParticles(word.x, word.y, '#00ff41', 15);
+            createParticles(word.x, word.y, THEME.successParticle, 15);
             gameState.screenShake = 10;
             
             // Remove word and reset input
