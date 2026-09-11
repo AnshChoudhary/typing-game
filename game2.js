@@ -109,9 +109,7 @@ function generateWordDrop() {
             x: Math.random() * (canvas.width - 150) + 50,
             y: -30,
             speed: gameState.baseSpeed + (gameState.level - 1) * 0.2,
-            color: THEME.wordColors[Math.floor(Math.random() * THEME.wordColors.length)],
-            glow: Math.random() * 10 + 5,
-            matched: false
+            color: THEME.wordColors[Math.floor(Math.random() * THEME.wordColors.length)]
         };
         gameState.words.push(word);
     }
